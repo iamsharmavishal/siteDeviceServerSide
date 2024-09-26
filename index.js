@@ -15,7 +15,7 @@ const server = http.createServer(app);
 // Create a new instance of Socket.IO with CORS settings
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:53783", // Update this with your Angular app's URL
+    origin: "http://localhost:4200", // Update this with your Angular app's URL
     methods: ["GET", "POST"],
   },
 });
@@ -24,60 +24,61 @@ const io = new Server(server, {
 // Sample tank data
 const tankData = [
   {
-    id: 1,
     title: "Tank 1",
     type: "Unleaded",
     alertStatus: "0",
-    fillPercentage: 30,
-    capacity: 200,
-    volume: 2000,
+    fillPercentage: 50, // Oil fill percentage
+    waterFillPercentage: 20, // Water fill percentage
+    capacity: 200, // Total tank capacity
+    volume: 100, // Combined volume (oil + water)
   },
   {
-    id: 2,
     title: "Tank 2",
     type: "Diesel",
     alertStatus: "1",
-    fillPercentage: 60,
+    fillPercentage: 60, // Oil fill percentage
+    waterFillPercentage: 30, // Water fill percentage
     capacity: 300,
-    volume: 2500,
+    volume: 200,
   },
   {
-    id: 3,
     title: "Tank 3",
-    type: "Premium",
+    type: "Octane 91",
     alertStatus: "0",
-    fillPercentage: 90,
+    fillPercentage: 80,
+    waterFillPercentage: 20,
     capacity: 400,
-    volume: 3000,
+    volume: 380,
   },
   {
-    id: 4,
     title: "Tank 4",
-    type: "Premium",
+    type: "Petrol",
     alertStatus: "0",
     fillPercentage: 30,
+    waterFillPercentage: 20,
     capacity: 400,
-    volume: 3000,
+    volume: 150,
   },
   {
-    id: 5,
     title: "Tank 5",
-    type: "Premium",
+    type: "Regular",
     alertStatus: "0",
-    fillPercentage: 95,
+    fillPercentage: 80,
+    waterFillPercentage: 20,
     capacity: 400,
-    volume: 10000,
+    volume: 400,
   },
   {
-    id: 6,
     title: "Tank 6",
     type: "Premium",
     alertStatus: "0",
     fillPercentage: 65,
+    waterFillPercentage: 15,
     capacity: 200,
-    volume: 10000,
+    volume: 150,
   },
 ];
+
 
 // Sample site data
 const sites = [
@@ -207,12 +208,12 @@ io.on("connection", (socket) => {
   setInterval(() => {
     // Modify tank data randomly (simulate real-time changes)
     tankData.forEach((tank) => {
-      tank.fillPercentage = Math.floor(Math.random() * 100); // Random fill percentage
+      tank.fillPercentage = Math.floor(Math.random() * 80); // Random fill percentage
     });
 
     // Emit the updated tank data to all connected clients
     io.emit("tankData", tankData);
-  }, 5000); // Update every 5 seconds
+  }, 10000); // Update every 5 seconds
 
   // Handle client disconnect
   socket.on("disconnect", () => {
