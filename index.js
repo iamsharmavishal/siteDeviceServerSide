@@ -24,58 +24,58 @@ const io = new Server(server, {
 // Sample tank data
 const tankData = [
   {
-    title: "Tank 1",
-    type: "Unleaded",
-    alertStatus: "0",
-    fillPercentage: 50, // Oil fill percentage
-    waterFillPercentage: 20, // Water fill percentage
-    capacity: 200, // Total tank capacity
-    volume: 100, // Combined volume (oil + water)
+      title: "Tank 1",
+      type: "Unleaded",
+      alertStatus: "0",
+      fillPercentage: 50,
+      waterFillPercentage: 20,
+      capacity: 200,
+      volume: 100,
   },
   {
-    title: "Tank 2",
-    type: "Diesel",
-    alertStatus: "1",
-    fillPercentage: 60, // Oil fill percentage
-    waterFillPercentage: 30, // Water fill percentage
-    capacity: 300,
-    volume: 200,
+      title: "Tank 2",
+      type: "Diesel",
+      alertStatus: "1",
+      fillPercentage: 60,
+      waterFillPercentage: 30,
+      capacity: 300,
+      volume: 200,
   },
   {
-    title: "Tank 3",
-    type: "Octane 91",
-    alertStatus: "0",
-    fillPercentage: 80,
-    waterFillPercentage: 20,
-    capacity: 400,
-    volume: 380,
+      title: "Tank 3",
+      type: "Octane 91",
+      alertStatus: "0",
+      fillPercentage: 80,
+      waterFillPercentage: 20,
+      capacity: 400,
+      volume: 380,
   },
   {
-    title: "Tank 4",
-    type: "Petrol",
-    alertStatus: "0",
-    fillPercentage: 30,
-    waterFillPercentage: 20,
-    capacity: 400,
-    volume: 150,
+      title: "Tank 4",
+      type: "Petrol",
+      alertStatus: "0",
+      fillPercentage: 30,
+      waterFillPercentage: 20,
+      capacity: 400,
+      volume: 150,
   },
   {
-    title: "Tank 5",
-    type: "Regular",
-    alertStatus: "0",
-    fillPercentage: 80,
-    waterFillPercentage: 20,
-    capacity: 400,
-    volume: 400,
+      title: "Tank 5",
+      type: "Regular",
+      alertStatus: "0",
+      fillPercentage: 80,
+      waterFillPercentage: 20,
+      capacity: 400,
+      volume: 400,
   },
   {
-    title: "Tank 6",
-    type: "Premium",
-    alertStatus: "0",
-    fillPercentage: 65,
-    waterFillPercentage: 15,
-    capacity: 200,
-    volume: 150,
+      title: "Tank 6",
+      type: "Premium",
+      alertStatus: "0",
+      fillPercentage: 65,
+      waterFillPercentage: 15,
+      capacity: 200,
+      volume: 150,
   },
 ];
 
@@ -197,6 +197,29 @@ app.get("/api/priceList", (req, res) => {
   res.json(priceStatusList);
 });
 
+// Temporary storage for submitted alerts
+let submittedAlerts = [];
+
+
+
+// API Endpoint: Submit alert data
+app.post("/api/submitAlert", express.json(), (req, res) => {
+  const { siteId, alertType, alertLevel, action } = req.body;
+
+  // Process the alert data and store it in the temporary array
+  const alertData = { siteId, alertType, alertLevel, action, timestamp: new Date() };
+  submittedAlerts.push(alertData);
+
+  console.log("Received alert data:", alertData);
+
+  // Respond with a success message
+  res.json({ message: `Alert ${action}d successfully for site ${siteId}!` });
+});
+
+// API Endpoint: Get list of submitted alerts
+app.get("/api/submittedAlerts", (req, res) => {
+  res.json(submittedAlerts);
+});
 // When a client connects to the Socket.IO server
 io.on("connection", (socket) => {
   console.log("A client connected: ", socket.id);
@@ -208,12 +231,12 @@ io.on("connection", (socket) => {
   setInterval(() => {
     // Modify tank data randomly (simulate real-time changes)
     tankData.forEach((tank) => {
-      tank.fillPercentage = Math.floor(Math.random() * 80); // Random fill percentage
+        tank.fillPercentage = Math.floor(Math.random() * 100); // Random fill percentage
     });
 
     // Emit the updated tank data to all connected clients
     io.emit("tankData", tankData);
-  }, 10000); // Update every 5 seconds
+}, 5000); // Update every 5 seconds
 
   // Handle client disconnect
   socket.on("disconnect", () => {
